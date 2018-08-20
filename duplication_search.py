@@ -3,11 +3,12 @@
 
 """
 Created on 2018.8.17
-Finished on 2018.8.17
+Finished on 2018.8.20
 @author: Wang Yuntao
 """
 
 import os
+import sys
 import hashlib
 from collections import Counter
 
@@ -64,7 +65,7 @@ def get_file_md5(file_path):
     :return:
         hash_code: hash code of file
     """
-    md5 = None
+    hash_code = None
     if os.path.exists(file_path):
         file = open(file_path, 'rb')
         md5_obj = hashlib.md5()
@@ -72,12 +73,16 @@ def get_file_md5(file_path):
         hash_code = md5_obj.hexdigest()
         file.close()
 
-    return md5
+    return hash_code
 
 
 def get_duplication(files_path):
     """
     get duplication list
+    :param files_path: path to be retrieved of files
+    :return:
+        duplication_file_list: a list containing duplicated files
+        left_list: a list containing all left files (e.g. 0, 1, 2 are duplicated files, file 2 will be left)
     """
     # get files path list
     files_path_list = get_files_list(files_path)
@@ -92,20 +97,47 @@ def get_duplication(files_path):
     Counter_list = Counter(hash_code_list)
 
     # get duplication list
-    for item in Counter_list.items():
-        if item[1] > 1:
-            duplication_list = [index for index in range(len(hash_code_list)) if hash_code_list[index] == item[0]]
+    duplications_list, left_list = [], []
+    if len(Counter_list.values()):
+        for item in Counter_list.items():
+            if item[1] > 1:
+                duplication_list = [index for index in range(len(hash_code_list)) if hash_code_list[index] == item[0]]
+                left_list.append(duplication_list[-1])
+                del duplication_list[-1]
+                duplications_list.extend(duplication_list)
+            else:
+                pass
+    else:
+        pass
 
     # get duplication file list
     duplication_file_list = []
-    for i in range(len(duplication_list)):
-        duplication_file_list.append(files_path_list[i])
+    for order in duplications_list:
+        duplication_file_list.append(files_path_list[order])
 
     return duplication_file_list
 
 
+def file_remove(duplication_file_list):
+    """
+    remove duplicated files
+    :param duplication_file_list: a list containing duplicated files
+    :return
+        NULL
+    """
+    for file in duplication_file_list:
+        os.remove(file)
+
+
 if __name__ == "__main__":
-    files_path = "E:/Myself/2.database/1.wav"
-    hash_code_list = get_duplication(files_path)
-    print(hash_code_list)
-    print(type(hash_code_list))
+    params_num = len(sys.argv)
+    if params_num == 2:
+        files_path = sys.argv[1]
+        duplication_file_list = get_duplication(files_path)
+        if len(duplication_file_list) == 0:
+            print("No duplicated files in this path.")
+        else:
+            file_remove(duplication_file_list)
+            print("All duplicated files have been removed.")
+    else:
+        print("Please input the command as the format of {python duplcatate_search.py \"files_path\"}.")
