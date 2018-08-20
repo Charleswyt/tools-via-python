@@ -8,6 +8,7 @@ Finished on 2018.5.2
 """
 
 import psutil
+import datetime
 import platform
 import win_unicode_console
 
@@ -36,6 +37,10 @@ def unit_conversion(value):
 def get_system_info():
     """
     Get the information of operation system
+    :param 
+        NULL
+    :return
+        system: the system of the current machine
     """
     user = psutil.users()[0].name
     system = platform.platform()
@@ -46,6 +51,35 @@ def get_system_info():
           % (user, system, machine, node, processor))
 
     return system
+
+
+def get_open_time():
+    """
+    Get the open time of the current machine
+    :param 
+        NULL
+    :return
+        start_time: the strat time of the current machine
+    """
+    start_time_stamp = psutil.boot_time()
+    start_time = datetime.datetime.fromtimestamp(start_time_stamp).strftime("%Y-%m-%d %H:%M:%S")
+    
+    return start_time
+
+
+def get_run_time():
+    """
+    get run time of the current machine
+    :param 
+        NULL
+    :return
+        run_time: the run time of the current machine
+    """
+
+    start_time = datetime.datetime.utcfromtimestamp(psutil.boot_time())
+    current_time = datetime.datetime.now()
+    run_time = current_time - start_time
+    return run_time
 
 
 def get_cpu_info():
@@ -110,10 +144,11 @@ def get_disk_info():
 
             print("drive: %s, type: %s, opts: %s, total storage: %6.2f%s, used storage: %6.2f%s, free storage: %6.2f%s, utilization_ratio: %3.1f%%"
                   % (device, fstype, opts, storage_total, unit_total, storage_used, unit_used, storage_free, unit_free,  utilization_ratio))
-    
+
 
 if __name__ == "__main__":
     print("The information of the current machine.")
+    print("The current machine is started at %s, and has been run for %s" % (get_open_time(), get_run_time()))
     print("--------------------------------------------System--------------------------------------------")
     get_system_info()
     print("---------------------------------------------CPU----------------------------------------------")
