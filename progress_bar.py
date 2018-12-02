@@ -11,7 +11,7 @@ import sys
 import time
 
 
-class ShowProcess():
+class ShowProcess:
     """
     显示处理进度的类
     调用该类相关函数即可实现处理进度的显示
@@ -22,16 +22,16 @@ class ShowProcess():
     infoDone = 'done'
 
     # 初始化函数，需要知道总共的处理次数
-    def __init__(self, max_steps, infoDone='Done'):
+    def __init__(self, max_steps, info_done='Done'):
         self.max_steps = max_steps
         self.i = 0
-        self.infoDone = infoDone
+        self.infoDone = info_done
 
     # 显示函数，根据当前的处理进度i显示进度
     # 效果为[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■]100.00%
-    def show_process(self, i=None):
-        if i is not None:
-            self.i = i
+    def show_process(self, index=None):
+        if index is not None:
+            self.i = index
         else:
             self.i += 1
         num_arrow = int(self.i * self.max_arrow / self.max_steps)  # 计算显示多少个'>'
@@ -51,10 +51,10 @@ class ShowProcess():
 
 
 if __name__ == '__main__':
-    max_steps = 100
+    max_steps_ = 100
 
-    process_bar = ShowProcess(max_steps, 'OK')
+    process_bar_ = ShowProcess(max_steps_, 'OK')
 
-    for i in range(max_steps):
-        process_bar.show_process()
+    for i in range(max_steps_):
+        process_bar_.show_process()
         time.sleep(0.1)

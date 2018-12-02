@@ -8,10 +8,12 @@ Finished on 2018.5.2
 """
 
 import os
+import sys
 import time
 import win_unicode_console
 
 win_unicode_console.enable()
+
 
 def get_file_path(file_folder, file_types):
     """
@@ -83,10 +85,22 @@ def get_lines(file_folder, file_types):
     print("total lines: %d" % total_lines)
     
 
-if __name__ == '__main__':
-    startTime = time.clock()
-    file_folder = "E:/Myself/1.source_code/audio_steganalysis"
-    file_types = ["cpp"]
-    print("file floder: %s" % file_folder)
-    get_lines(file_folder, file_types)
-    print('Done! Cost Time: %0.2f second' % (time.clock() - startTime))
+if __name__ == "__main__":
+    params_num = len(sys.argv)
+    if params_num == 1:
+        print("Please input the command as the format of {python source_code_statistics.py \"code_files_floder\" \"code_type (default is cpp)\"} ")
+    else:
+        if params_num == 2:
+            args_file_folder = sys.argv[1]
+            args_file_types = ["cpp"]
+        else:
+            args_file_folder = sys.argv[1]
+            i = 2
+            args_file_types = []
+            while i < params_num:
+                args_file_types.append(sys.argv[i])
+                i += 1
+
+        startTime = time.clock()
+        get_lines(args_file_folder, args_file_types)
+        print('Done! Cost Time: %0.2f second' % (time.clock() - startTime))

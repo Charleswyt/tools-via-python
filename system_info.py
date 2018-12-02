@@ -158,4 +158,3 @@ if __name__ == "__main__":
     get_swap_memory_info()      # swap memory
     print("-------------------------------------------Storage--------------------------------------------")
     get_disk_info()             # disk
-    
