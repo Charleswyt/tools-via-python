@@ -5,7 +5,6 @@
 Created on 2018.12.4
 Finished on 2018.12.4
 Modified on 
-
 @author: Yuntao Wang
 """
 
@@ -20,14 +19,15 @@ visible_file_path = ""
 
 
 def communication_server(connection_host=socket.gethostname(), connection_port=1234, 
-        max_connection=5):
+        max_connection=5, encoding_type="utf-8"):
     """
-    :param connection_host:
-    :param connection_port:
-    :param max_connection:
-    :param msg_type: 
+    :param connection_host: the host for communication
+    :param connection_port: the port for communication
+    :param max_connection: the maximum number of connections
+    :param msg_type: the type of message for communication
+    :param encoding_type: the type of message encoding
     :return:
-        
+        NULL
     """
 
     socket_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)       # create socket object
@@ -45,20 +45,22 @@ def communication_server(connection_host=socket.gethostname(), connection_port=1
     while True:
         socket_client, addr = socket_server.accept()                        # build the connection
         receive_message_byte = socket_client.recv(buffer_size)
-        receive_message_str = str(receive_message_byte, encoding = encoding_type)
+        receive_message_str = str(receive_message_byte, encoding=encoding_type)
         
         split_content = receive_message_str.split("+")
-        request_type = split_content[0]
+        if len(split_content) == 2:
+            request_type = split_content[0]
+        else:
+            request_type = "None"
         
         print("Address %s is connected." % str(addr))
-        # request_type = 
         print("Request for %s" % request_type)        
 
         if request_type == "None":
             msg = "Request Null." + "\r\n"
-        elif request_type == "file_list":
-            file_list = sorted(glob(visible_file_path + "/*"))
-            msg = str(file_list)
+        elif request_type == "message":
+            msg = split_content[1]
+            print("receive message: %s" % msg)
         elif request_type == "file":
             file_path = split_content[1]
             if os.path.exists(file_path):

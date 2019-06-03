@@ -1,22 +1,16 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
-Created on 2018.12.4
-Finished on 2018.12.4
+Created on 2019.05.30
+Finished on 2019.05.30
 Modified on 
-
 @author: Yuntao Wang
 """
 
 import socket
 
-buffer_size = 65536
-encoding_type= "utf-8"
-
 
 def communication_client(connection_host=socket.gethostname(), connection_port=1234,
-                         request_type="None", request_file_path=None, write_file_path="receive.txt"):
+                         request_type="None", encoding_type="utf-8", buffer_size=1024,
+                         request_file_path=None, send_message="hello", write_file_path="receive.txt"):
     """
     :param connection_host: host of connected server
     :param connection_port: port of connected server
@@ -32,10 +26,10 @@ def communication_client(connection_host=socket.gethostname(), connection_port=1
     socket_client.connect((socket_host, socket_port))                       # bind host and port
     
     # send request to server
-    send_message = request_type
     if request_type == "file":
-        send_message += ("+" + request_file_path)
-    
+        send_message = "file+" + request_file_path
+    elif request_type == "message":
+        send_message = "message+" + send_message
     socket_client.send(bytes(send_message, encoding=encoding_type))
     msg = socket_client.recv(buffer_size)                                   # set buffer size
     
@@ -53,9 +47,14 @@ def communication_client(connection_host=socket.gethostname(), connection_port=1
     
 
 if __name__ == "__main__":
-    host = ""
+    host = "192.168.2.159"
     port = 1234
-    request = "file"
-    saved_file_path = "test.txt"
-    file_path = ""
-    communication_client(host, port, request, file_path, saved_file_path)
+    request = "None"
+    send_message = "hello world"
+    request_file_path = "C:/Users/CatKing/Desktop/code/audio_steganalysis_ml/plot/test.txt"
+    saved_file_path = "C:/Users/CatKing/Desktop/receive.txt"
+
+    communication_client(connection_host=host, connection_port=port, request_type=request,
+                         request_file_path=request_file_path, send_message=send_message,
+                         write_file_path=saved_file_path)
+    
